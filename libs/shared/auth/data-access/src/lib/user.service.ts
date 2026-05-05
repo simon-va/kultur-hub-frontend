@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { map, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, map, switchMap, filter, take, tap } from 'rxjs';
 import { Client } from '@kultur-hub/shared/api';
 import { SupabaseService } from './supabase.service';
 import { User } from '@kultur-hub/shared/domain';
@@ -11,7 +11,25 @@ export class UserService {
 
   readonly currentUser = signal<User | null>(null);
 
+  private readonly _ready$ = new BehaviorSubject<boolean>(false);
+  readonly ready$ = this._ready$.asObservable();
+
+  constructor() {
+    this.supabase.initialized$.pipe(
+      filter(Boolean),
+      take(1),
+      switchMap(() => {
+        if (!this.supabase.currentSession) {
+          this._ready$.next(true);
+          return EMPTY;
+        }
+        return this.loadCurrentUser();
+      })
+    ).subscribe();
+  }
+
   loadCurrentUser() {
+    this._ready$.next(false);
     const userId = this.supabase.currentSession!.user.id;
     return this.client.users(userId).pipe(
       map((res) => ({
@@ -22,7 +40,10 @@ export class UserService {
         isAdmin: res.isAdmin,
         organizationMemberships: [],
       } satisfies User)),
-      tap((user) => this.currentUser.set(user))
+      tap((user) => {
+        this.currentUser.set(user);
+        this._ready$.next(true);
+      })
     );
   }
 
@@ -32,5 +53,6 @@ export class UserService {
 
   clear(): void {
     this.currentUser.set(null);
+    this._ready$.next(true);
   }
 }

@@ -11,12 +11,15 @@ export class SupabaseService {
   );
 
   private readonly _session$ = new BehaviorSubject<Session | null>(null);
+  private readonly _initialized$ = new BehaviorSubject<boolean>(false);
 
   readonly session$: Observable<Session | null> = this._session$.asObservable();
+  readonly initialized$ = this._initialized$.asObservable();
 
   constructor() {
     this.client.auth.getSession().then(({ data }) => {
       this._session$.next(data.session);
+      this._initialized$.next(true);
     });
 
     this.client.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
