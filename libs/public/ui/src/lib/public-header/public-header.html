@@ -1,0 +1,60 @@
+<div class="header-top">
+  <div class="container">
+    <span>Kultur in Bocholt und Umgebung</span>
+  </div>
+</div>
+<div class="header-nav">
+  <div class="container">
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      [rounded]="true"
+      severity="contrast"
+      styleClass="hamburger-btn"
+      (click)="toggle($event)"
+    />
+    <nav>
+      <a routerLink="/willkommen" routerLinkActive="active">Willkommen</a>
+      <a routerLink="/kulturkalender" routerLinkActive="active">Kulturkalender</a>
+      <a routerLink="/berichte" routerLinkActive="active">Berichte</a>
+      <a routerLink="/mach-mit" routerLinkActive="active">Mach Mit!</a>
+      <a routerLink="/kulturschaffende" routerLinkActive="active">Kulturschaffende</a>
+    </nav>
+  </div>
+</div>
+
+<p-popover #menu>
+  <div class="nav-popover">
+    <div class="menu-section">
+      <a routerLink="/login" class="menu-item" (click)="close()">
+        <i class="pi pi-arrow-right"></i>
+        <span>Zum Portal</span>
+      </a>
+    </div>
+
+    <p-divider />
+
+    <div class="menu-section">
+      <a routerLink="/willkommen" routerLinkActive="active" class="menu-item" (click)="close()">
+        <i class="pi pi-home"></i>
+        <span>Willkommen</span>
+      </a>
+      <a routerLink="/kulturkalender" routerLinkActive="active" class="menu-item" (click)="close()">
+        <i class="pi pi-calendar"></i>
+        <span>Kulturkalender</span>
+      </a>
+      <a routerLink="/berichte" routerLinkActive="active" class="menu-item" (click)="close()">
+        <i class="pi pi-megaphone"></i>
+        <span>Berichte</span>
+      </a>
+      <a routerLink="/mach-mit" routerLinkActive="active" class="menu-item" (click)="close()">
+        <i class="pi pi-handshake"></i>
+        <span>Mach Mit!</span>
+      </a>
+      <a routerLink="/kulturschaffende" routerLinkActive="active" class="menu-item" (click)="close()">
+        <i class="pi pi-info-circle"></i>
+        <span>Kulturschaffende</span>
+      </a>
+    </div>
+  </div>
+</p-popover>

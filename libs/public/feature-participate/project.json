@@ -1,0 +1,13 @@
+{
+  "name": "public-feature-participate",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/public/feature-participate/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["scope:public", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

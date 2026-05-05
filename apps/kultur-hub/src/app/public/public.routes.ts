@@ -1,25 +1,46 @@
 import { Routes } from '@angular/router';
+import { PublicShell } from '@kultur-hub/public/ui';
 
 export const publicRoutes: Routes = [
   {
     path: '',
-    // TODO: add public shell/layout component
+    component: PublicShell,
     children: [
-      { path: '', redirectTo: 'events', pathMatch: 'full' },
+      { path: '', redirectTo: 'willkommen', pathMatch: 'full' },
       {
-        path: 'events',
+        path: 'willkommen',
         loadChildren: () =>
-          import('@kultur-hub/public/feature-events').then((m) => m.publicFeatureEventsRoutes),
+          import('@kultur-hub/public/feature-welcome').then(
+            (m) => m.publicFeatureWelcomeRoutes,
+          ),
       },
       {
-        path: 'reports',
+        path: 'kulturkalender',
         loadChildren: () =>
-          import('@kultur-hub/public/feature-reports').then((m) => m.publicFeatureReportsRoutes),
+          import('@kultur-hub/public/feature-events').then(
+            (m) => m.publicFeatureEventsRoutes,
+          ),
       },
       {
-        path: 'clubs',
+        path: 'berichte',
         loadChildren: () =>
-          import('@kultur-hub/public/feature-clubs').then((m) => m.publicFeatureClubsRoutes),
+          import('@kultur-hub/public/feature-reports').then(
+            (m) => m.publicFeatureReportsRoutes,
+          ),
+      },
+      {
+        path: 'mach-mit',
+        loadChildren: () =>
+          import('@kultur-hub/public/feature-participate').then(
+            (m) => m.publicFeatureParticipateRoutes,
+          ),
+      },
+      {
+        path: 'kulturschaffende',
+        loadChildren: () =>
+          import('@kultur-hub/public/feature-clubs').then(
+            (m) => m.publicFeatureClubsRoutes,
+          ),
       },
     ],
   },
