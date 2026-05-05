@@ -1,59 +1,97 @@
-# KulturHubFrontend
+# Kulturhub Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
+Eine Web-Plattform für Kulturvereine. Nutzer können Organisationen verwalten, Veranstaltungen und Berichte veröffentlichen sowie Vereinsprofile pflegen. Dazu gibt es einen öffentlichen Bereich und einen Adminbereich.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Angular 21** (Standalone Components)
+- **NX 22** (Monorepo, Library-Boundaries)
+- **PrimeNG 21** mit Aura-Theme
+- **Supabase JS** (Session-Management)
+- **nswag** (OpenAPI → Angular Client)
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Entwicklungsserver starten
 
 ```bash
-ng generate component component-name
+npm start
+# oder
+npx nx serve kultur-hub
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+App läuft unter `http://localhost:4200`.
+
+## Bauen
 
 ```bash
-ng generate --help
+npm run build
+# oder
+npx nx build kultur-hub
 ```
 
-## Building
+## API-Client generieren
 
-To build the project run:
+Setzt einen laufenden Backend-Server voraus (Standard: `http://localhost:5000`).
 
 ```bash
-ng build
+npm run generate-api
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Der generierte Client landet in `libs/shared/api/src/lib/api.generated.ts`.
 
-## Running unit tests
+## Projektstruktur
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+```
+apps/
+  kultur-hub/                    # Deploybare Angular-App
+
+libs/
+  public/                        # Öffentlicher Bereich (kein Login)
+    feature-events/
+    feature-reports/
+    feature-clubs/
+    ui/
+
+  portal/                        # Organisationsverwaltung (Login required)
+    feature-register/            # Registrierung per Einladungslink
+    feature-organizations/
+    feature-events/
+    feature-reports/
+    feature-profile/
+    ui/
+
+  admin/                         # Adminbereich (Admin-Rolle required)
+    feature-invitations/
+    feature-users/
+    feature-organizations/
+    ui/
+
+  shared/
+    auth/
+      feature-login/             # Login-Seite
+      data-access/               # SupabaseService, Guards, Interceptor
+    api/                         # nswag-generierter OpenAPI-Client
+    ui/
+    util/
+    domain/                      # TypeScript-Interfaces
+```
+
+## URL-Struktur
+
+| Pfad | Bereich | Auth |
+|------|---------|------|
+| `/` | Öffentlich (Startseite → `/events`) | Nein |
+| `/events`, `/reports`, `/clubs` | Öffentlich | Nein |
+| `/login` | Login | Nein |
+| `/register?code=xyz` | Registrierung per Einladungslink | Nein |
+| `/portal/...` | Organisationsverwaltung | Ja |
+| `/admin/...` | Adminbereich | Ja + Admin-Rolle |
+
+## Konfiguration
+
+Supabase-URL, Anon-Key und API-Base-URL werden in `apps/kultur-hub/src/environments/environment.ts` gesetzt.
+
+## Tests
 
 ```bash
-ng test
+npx nx test
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

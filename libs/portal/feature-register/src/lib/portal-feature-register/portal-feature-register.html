@@ -1,0 +1,49 @@
+<div class="register-page">
+  <div class="register-card">
+    <h1>Registrieren</h1>
+    <p>Du benötigst einen Einladungslink, um ein Konto zu erstellen.</p>
+
+    @if (errorMessage()) {
+      <p-message severity="error">{{ errorMessage() }}</p-message>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="firstName">Vorname</label>
+        <input pInputText id="firstName" formControlName="firstName" autocomplete="given-name" />
+      </div>
+
+      <div class="field">
+        <label for="lastName">Nachname</label>
+        <input pInputText id="lastName" formControlName="lastName" autocomplete="family-name" />
+      </div>
+
+      <div class="field">
+        <label for="email">E-Mail</label>
+        <input pInputText id="email" type="email" formControlName="email" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label for="password">Passwort</label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          [toggleMask]="true"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="field">
+        <label for="invitationCode">Einladungscode</label>
+        <input pInputText id="invitationCode" formControlName="invitationCode" />
+      </div>
+
+      <p-button
+        type="submit"
+        label="Registrieren"
+        [loading]="loading()"
+        [disabled]="form.invalid"
+      />
+    </form>
+  </div>
+</div>

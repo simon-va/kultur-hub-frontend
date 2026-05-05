@@ -1,0 +1,16 @@
+{
+  "name": "portal-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portal/ui/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [
+    "scope:portal",
+    "type:ui"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

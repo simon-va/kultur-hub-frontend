@@ -1,0 +1,86 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@kultur-hub/shared/domain": [
+        "./libs/shared/domain/src/index.ts"
+      ],
+      "@kultur-hub/shared/auth/data-access": [
+        "./libs/shared/auth/data-access/src/index.ts"
+      ],
+      "@kultur-hub/shared/auth/feature-login": [
+        "./libs/shared/auth/feature-login/src/index.ts"
+      ],
+      "@kultur-hub/shared/ui": [
+        "./libs/shared/ui/src/index.ts"
+      ],
+      "@kultur-hub/shared/util": [
+        "./libs/shared/util/src/index.ts"
+      ],
+      "@kultur-hub/shared/api": [
+        "./libs/shared/api/src/index.ts"
+      ],
+      "@kultur-hub/portal/feature-register": [
+        "./libs/portal/feature-register/src/index.ts"
+      ],
+      "@kultur-hub/portal/feature-organizations": [
+        "./libs/portal/feature-organizations/src/index.ts"
+      ],
+      "@kultur-hub/portal/feature-events": [
+        "./libs/portal/feature-events/src/index.ts"
+      ],
+      "@kultur-hub/portal/feature-reports": [
+        "./libs/portal/feature-reports/src/index.ts"
+      ],
+      "@kultur-hub/portal/feature-profile": [
+        "./libs/portal/feature-profile/src/index.ts"
+      ],
+      "@kultur-hub/portal/ui": [
+        "./libs/portal/ui/src/index.ts"
+      ],
+      "@kultur-hub/public/feature-events": [
+        "./libs/public/feature-events/src/index.ts"
+      ],
+      "@kultur-hub/public/feature-reports": [
+        "./libs/public/feature-reports/src/index.ts"
+      ],
+      "@kultur-hub/public/feature-clubs": [
+        "./libs/public/feature-clubs/src/index.ts"
+      ],
+      "@kultur-hub/public/ui": [
+        "./libs/public/ui/src/index.ts"
+      ],
+      "@kultur-hub/admin/feature-invitations": [
+        "./libs/admin/feature-invitations/src/index.ts"
+      ],
+      "@kultur-hub/admin/feature-users": [
+        "./libs/admin/feature-users/src/index.ts"
+      ],
+      "@kultur-hub/admin/feature-organizations": [
+        "./libs/admin/feature-organizations/src/index.ts"
+      ],
+      "@kultur-hub/admin/ui": [
+        "./libs/admin/ui/src/index.ts"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}
