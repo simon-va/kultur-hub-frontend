@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'styles/fonts';
+@use 'styles/layout';
+@use 'styles/primeng';
+@use 'styles/typography';
 @import 'primeicons/primeicons.css';
 
 *,
@@ -7,19 +11,13 @@
   box-sizing: border-box;
 }
 
-h1 {
-  color: var(--p-primary-color);
-  font-size: 24px;
-  font-weight: 400;
-  letter-spacing: 0em;
-  word-spacing: 0em;
-}
-
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  font-family: "Roboto Medium", Tahoma;
+  font-family: var(--p-font-family);
+
+  letter-spacing: 0em;
+  word-spacing: 0em;
 }

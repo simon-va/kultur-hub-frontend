@@ -1,3 +1,10 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: block;
+}
+
 .header-top {
   background-color: var(--p-primary-500);
   height: 48px;
@@ -42,7 +49,6 @@
         align-items: center;
         text-decoration: none;
         color: var(--p-text-color);
-        font-size: 14px;
         border-bottom: 2px solid transparent;
 
         &:hover {

@@ -1,0 +1,17 @@
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--p-font-family);
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0em;
+  word-spacing: 0em;
+  color: var(--p-primary-color);
+}
+
+p {
+  font-family: var(--p-font-family);
+  font-weight: 300;
+}

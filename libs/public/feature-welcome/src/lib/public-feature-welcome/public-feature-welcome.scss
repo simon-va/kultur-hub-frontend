@@ -2,23 +2,32 @@
   width: 100%;
   display: flex;
   justify-content: center;
+
+  margin-top: 32px;
+  margin-bottom: 40px;
+}
+
+.logo-tab {
+  img {
+    width: 100%;
+  }
 }
 
 .text-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
-}
+  margin-top: 12px;
 
-.text-container {
-  max-width: 760px;
-}
+  &--green {
+    background-color: #edf7ee;
 
-.logo-container {
-  max-width: 760px;
-  padding: 35px 43px 0 43px;
-
-  img {
-    width: 100%;
+    padding: 35px 0;
   }
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 16px;
 }
