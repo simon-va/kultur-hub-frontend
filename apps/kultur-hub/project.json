@@ -21,7 +21,8 @@
           {
             "glob": "**/*",
             "input": "apps/kultur-hub/public"
-          }
+          },
+          "apps/kultur-hub/src/_redirects"
         ],
         "styles": [
           "apps/kultur-hub/src/styles.scss"
