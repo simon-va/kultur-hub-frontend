@@ -9,8 +9,7 @@
   background-color: var(--p-primary-500);
   height: 48px;
 
-  .container {
-    max-width: 760px;
+  .tab {
     margin: 0 auto;
     height: 100%;
     display: flex;
@@ -27,8 +26,11 @@
   height: 48px;
   background: var(--p-surface-100);
 
-  .container {
-    max-width: 760px;
+  @media (max-width: 846px) {
+    display: none;
+  }
+
+  .tab {
     margin: 0 auto;
     height: 100%;
     display: flex;
