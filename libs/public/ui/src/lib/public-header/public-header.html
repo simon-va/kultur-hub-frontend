@@ -1,7 +1,50 @@
 <div class="header-top">
   <div class="tab">
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      [rounded]="true"
+      severity="contrast"
+      styleClass="hamburger-btn hamburger-btn--top"
+      (click)="toggle()"
+    />
     <span>Kultur in Bocholt und Umgebung</span>
   </div>
+  @if (menuOpen()) {
+    <div class="nav-dropdown nav-dropdown--mobile" @menuSlide>
+      <div class="menu-section">
+        <a routerLink="/login" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-arrow-right"></i>
+          <span>Zum Portal</span>
+        </a>
+      </div>
+
+      <p-divider />
+
+      <div class="menu-section">
+        <a routerLink="/willkommen" routerLinkActive="active" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-home"></i>
+          <span>Willkommen</span>
+        </a>
+        <a routerLink="/kulturkalender" routerLinkActive="active" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-calendar"></i>
+          <span>Kulturkalender</span>
+        </a>
+        <a routerLink="/berichte" routerLinkActive="active" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-megaphone"></i>
+          <span>Berichte</span>
+        </a>
+        <a routerLink="/mach-mit" routerLinkActive="active" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-handshake"></i>
+          <span>Mach Mit!</span>
+        </a>
+        <a routerLink="/kulturschaffende" routerLinkActive="active" class="menu-item" (click)="closeMenu()">
+          <i class="pi pi-info-circle"></i>
+          <span>Kulturschaffende</span>
+        </a>
+      </div>
+    </div>
+  }
 </div>
 <div class="header-nav">
   <div class="tab">
