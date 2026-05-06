@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, EMPTY, map, switchMap, filter, take, tap } from 'rxjs';
 import { Client } from '@kultur-hub/shared/api';
-import { SupabaseService } from './supabase.service';
 import { User } from '@kultur-hub/shared/domain';
+import { BehaviorSubject, EMPTY, filter, map, switchMap, take, tap } from 'rxjs';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -30,7 +30,9 @@ export class UserService {
 
   loadCurrentUser() {
     this._ready$.next(false);
-    const userId = this.supabase.currentSession!.user.id;
+    const session = this.supabase.currentSession;
+    if (!session) return EMPTY;
+    const userId = session.user.id;
     return this.client.users(userId).pipe(
       map((res) => ({
         id: res.userId,
@@ -38,7 +40,6 @@ export class UserService {
         lastName: res.lastName,
         email: this.supabase.currentSession?.user?.email ?? '',
         isAdmin: res.isAdmin,
-        organizationMemberships: [],
       } satisfies User)),
       tap((user) => {
         this.currentUser.set(user);
