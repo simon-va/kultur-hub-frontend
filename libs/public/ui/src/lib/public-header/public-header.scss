@@ -70,8 +70,21 @@
   background: transparent !important;
 }
 
-.nav-popover {
-  min-width: 200px;
+.menu-wrapper {
+  position: relative;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 200;
+  min-width: 240px;
+  background: var(--p-surface-100);
+  border: 1px solid var(--p-surface-200);
+  border-radius: var(--p-border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.5rem;
 
   ::ng-deep .p-divider {
     margin-top: 8px;
