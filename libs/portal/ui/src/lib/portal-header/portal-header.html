@@ -1,13 +1,20 @@
 <header class="portal-header">
   <div class="portal-header__inner tab">
-    <span class="portal-header__title">Kultur in Bocholt und Umgebung</span>
-    <p-button
-      icon="pi pi-user"
-      [text]="true"
-      [rounded]="true"
-      severity="contrast"
-      (click)="profilePopover.toggle($event)"
-    />
+    <div class="portal-header__left">
+      <span class="portal-header__title">Kultur in Bocholt und Umgebung</span>
+    </div>
+    <div class="portal-header__right">
+      @if (store.selectedOrganisation(); as org) {
+        <span class="portal-header__org">{{ org.name }}</span>
+      }
+      <p-button
+        icon="pi pi-user"
+        [text]="true"
+        [rounded]="true"
+        severity="contrast"
+        (click)="profilePopover.toggle($event)"
+      />
+    </div>
   </div>
 </header>
 
@@ -21,10 +28,17 @@
       <p-divider />
       <div class="profile-panel__orgs">
         @for (org of store.organisations(); track org.id) {
-          <div class="profile-panel__org-item">
+          <button
+            class="profile-panel__org-item"
+            [class.profile-panel__org-item--active]="org.id === store.selectedOrganisationId()"
+            (click)="store.selectOrganisation(org.id)"
+          >
             <i class="pi pi-sitemap"></i>
             <span>{{ org.name }}</span>
-          </div>
+            @if (org.id === store.selectedOrganisationId()) {
+              <i class="pi pi-check profile-panel__org-check"></i>
+            }
+          </button>
         }
       </div>
     }

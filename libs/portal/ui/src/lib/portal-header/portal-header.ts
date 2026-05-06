@@ -20,6 +20,7 @@ export class PortalHeader {
 
   async logout(): Promise<void> {
     await this.supabase.signOut();
+    this.store.clearSelection();
     this.userService.clear();
     this.router.navigate(['/login']);
   }
