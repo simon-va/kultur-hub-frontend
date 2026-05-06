@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService, SupabaseService } from '@kultur-hub/shared/auth/data-access';
-import { Client } from '@kultur-hub/shared/api';
+import { OrganisationsStore } from '@kultur-hub/portal/domain';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { DividerModule } from 'primeng/divider';
@@ -17,7 +16,7 @@ export class PortalHeader {
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
   protected readonly userService = inject(UserService);
-  protected readonly organisations = toSignal(inject(Client).organisationsAll(), { initialValue: [] });
+  protected readonly store = inject(OrganisationsStore);
 
   async logout(): Promise<void> {
     await this.supabase.signOut();

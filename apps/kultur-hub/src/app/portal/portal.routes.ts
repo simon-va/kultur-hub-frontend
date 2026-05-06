@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { PortalShell } from '@kultur-hub/portal/ui';
+import { PortalShell, PortalCreateOrganisationPage } from '@kultur-hub/portal/ui';
+import { hasOrganisationGuard } from '@kultur-hub/portal/domain';
 
 export const portalRoutes: Routes = [
   {
@@ -9,10 +10,15 @@ export const portalRoutes: Routes = [
       {
         path: '',
         pathMatch: 'full',
+        canActivate: [hasOrganisationGuard],
         loadChildren: () =>
           import('@kultur-hub/portal/feature-overview').then(
             (m) => m.portalFeatureOverviewRoutes
           ),
+      },
+      {
+        path: 'setup',
+        component: PortalCreateOrganisationPage,
       },
       {
         path: 'organizations',

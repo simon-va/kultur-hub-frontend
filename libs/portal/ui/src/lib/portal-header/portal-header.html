@@ -17,10 +17,10 @@
       {{ userService.currentUser()?.firstName }} {{ userService.currentUser()?.lastName }}
     </div>
 
-    @if (organisations().length > 0) {
+    @if (store.organisations().length > 0) {
       <p-divider />
       <div class="profile-panel__orgs">
-        @for (org of organisations(); track org.id) {
+        @for (org of store.organisations(); track org.id) {
           <div class="profile-panel__org-item">
             <i class="pi pi-sitemap"></i>
             <span>{{ org.name }}</span>
@@ -35,6 +35,7 @@
       label="Abmelden"
       icon="pi pi-sign-out"
       [text]="true"
+      size="small"
       severity="danger"
       styleClass="profile-panel__logout"
       (click)="logout()"

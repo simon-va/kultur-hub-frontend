@@ -17,6 +17,10 @@
     font-size: 20px;
     color: #fff;
   }
+
+  ::ng-deep .p-button {
+    color: #fff;
+  }
 }
 
 .profile-panel {
