@@ -1,12 +1,20 @@
-<div class="login-page">
-  <div class="login-card">
-    <h1>Anmelden</h1>
+<div class="login-wrapper">
+  <p-card class="login-card">
+    <p-button
+      icon="pi pi-arrow-left"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      class="back-button"
+      (onClick)="router.navigate(['/willkommen'])"
+    />
+    <h1 class="login-title">KiBuU-Portal</h1>
 
     @if (errorMessage()) {
-      <p-message severity="error">{{ errorMessage() }}</p-message>
+      <p-message severity="error" class="login-error">{{ errorMessage() }}</p-message>
     }
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
       <div class="field">
         <label for="email">E-Mail</label>
         <input
@@ -32,9 +40,10 @@
       <p-button
         type="submit"
         label="Anmelden"
+        styleClass="w-full"
         [loading]="loading()"
         [disabled]="form.invalid"
       />
     </form>
-  </div>
+  </p-card>
 </div>
