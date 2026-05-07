@@ -1,0 +1,42 @@
+<div #messagesContainer class="chat-messages">
+  @if (conversationStore.loading()) {
+    <div class="chat-messages__skeletons">
+      @for (_ of [1, 2, 3]; track $index) {
+        <p-skeleton height="3rem" styleClass="mb-3" />
+      }
+    </div>
+  } @else if (conversationStore.messages().length === 0) {
+    <div class="chat-messages__empty">
+      @if (eventsStore.selectedEvent()) {
+        <span>Noch keine Nachrichten.<br>Beschreibe die Veranstaltung im Chat.</span>
+      } @else {
+        <span>Keine Veranstaltung ausgewählt</span>
+      }
+    </div>
+  } @else {
+    @for (msg of conversationStore.messages(); track msg.id) {
+      <div class="msg" [class.msg--user]="msg.role === 2" [class.msg--system]="msg.role === 1">
+        <div class="msg__avatar">{{ msg.role === 2 ? 'Du' : 'AI' }}</div>
+        <div class="msg__bubble">{{ msg.content }}</div>
+      </div>
+    }
+  }
+</div>
+
+<div class="chat-input-area">
+  <textarea
+    pTextarea
+    [formControl]="inputControl"
+    placeholder="Änderungen beschreiben…"
+    rows="1"
+    (keydown.enter)="onEnter($event)"
+    (input)="onInput($event)"
+    [attr.disabled]="(!eventsStore.selectedEventId() || conversationStore.sending()) ? '' : null"
+  ></textarea>
+  <p-button
+    icon="pi pi-send"
+    [loading]="conversationStore.sending()"
+    [disabled]="!eventsStore.selectedEventId()"
+    (click)="send()"
+  />
+</div>

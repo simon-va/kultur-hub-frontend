@@ -1,0 +1,47 @@
+<header class="sidebar-header">
+  <p-button
+    label="Neue Veranstaltung"
+    icon="pi pi-plus"
+    styleClass="w-full"
+    [loading]="store.loading()"
+    (click)="store.initializeEvent()"
+  />
+</header>
+
+<div class="sidebar-filter">
+  <p-selectbutton
+    [options]="filterOptions"
+    [ngModel]="filterValue()"
+    (ngModelChange)="filterValue.set($event)"
+    optionLabel="label"
+    optionValue="value"
+    styleClass="w-full"
+  />
+</div>
+
+<ul class="event-list">
+  @for (event of filteredEvents(); track event.id) {
+    <li
+      class="event-item"
+      [class.event-item--active]="event.id === store.selectedEventId()"
+      tabindex="0"
+      (click)="store.selectEvent(event.id)"
+      (keydown.enter)="store.selectEvent(event.id)"
+      (keydown.space)="store.selectEvent(event.id)"
+    >
+      <div class="event-item__title">{{ event.title || 'Neue Veranstaltung' }}</div>
+      <div class="event-item__meta">
+        @if (event.startTime) {
+          <span class="event-item__date">{{ event.startTime | date:"d. MMM · HH:mm" }} Uhr</span>
+        }
+        <p-tag
+          [value]="statusLabel(event.status)"
+          [severity]="statusSeverity(event.status)"
+        />
+      </div>
+    </li>
+  }
+  @if (filteredEvents().length === 0 && !store.loading()) {
+    <li class="event-list__empty">Keine Veranstaltungen</li>
+  }
+</ul>

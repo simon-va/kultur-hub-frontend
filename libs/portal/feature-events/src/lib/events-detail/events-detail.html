@@ -1,0 +1,83 @@
+@if (store.selectedEvent(); as ev) {
+  <header class="detail-header">
+    <div class="detail-header__left">
+      <i class="pi pi-calendar"></i>
+      Veranstaltung
+    </div>
+    <p-tag
+      [value]="statusLabel(ev.status)"
+      [severity]="statusSeverity(ev.status)"
+    />
+  </header>
+
+  <div class="detail-body">
+    <h2 class="detail-title">{{ ev.title || 'Neue Veranstaltung' }}</h2>
+    <p-divider />
+
+    @if (ev.description) {
+      <div class="detail-field">
+        <div class="detail-label">Beschreibung</div>
+        <div class="detail-value">{{ ev.description }}</div>
+      </div>
+    }
+
+    @if (ev.startTime) {
+      <div class="detail-field">
+        <div class="detail-label">Start</div>
+        <div class="detail-value">{{ ev.startTime | date:"d. MMM yyyy · HH:mm" }} Uhr</div>
+      </div>
+    }
+
+    @if (ev.endTime) {
+      <div class="detail-field">
+        <div class="detail-label">Ende</div>
+        <div class="detail-value">{{ ev.endTime | date:"d. MMM yyyy · HH:mm" }} Uhr</div>
+      </div>
+    }
+
+    @if (ev.address) {
+      <div class="detail-field">
+        <div class="detail-label">Ort</div>
+        <div class="detail-value">{{ ev.address }}</div>
+      </div>
+    }
+
+    @if (ev.errorMessage) {
+      <div class="detail-field">
+        <div class="detail-label">Fehler</div>
+        <div class="detail-value detail-value--error">{{ ev.errorMessage }}</div>
+      </div>
+    }
+
+    <div class="detail-hint">Felder können nur über den Chat bearbeitet werden.</div>
+  </div>
+
+  <footer class="detail-footer">
+    <p-button
+      label="Löschen"
+      severity="danger"
+      [outlined]="true"
+      icon="pi pi-trash"
+      [disabled]="true"
+    />
+    @if (ev.status === 1) {
+      <p-button
+        label="Zurück zu Entwurf"
+        severity="secondary"
+        icon="pi pi-arrow-circle-left"
+        [disabled]="true"
+      />
+    } @else {
+      <p-button
+        label="Veröffentlichen"
+        icon="pi pi-send"
+        [disabled]="true"
+      />
+    }
+  </footer>
+} @else {
+  <div class="detail-empty">
+    <i class="pi pi-calendar"></i>
+    <span>Hier erscheinen<br>die Veranstaltungsdetails</span>
+  </div>
+}
