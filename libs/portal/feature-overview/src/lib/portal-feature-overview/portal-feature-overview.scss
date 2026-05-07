@@ -1,0 +1,49 @@
+.overview-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 3rem 1rem;
+  background-color: var(--p-primary-100);
+}
+
+.overview-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--p-primary-color);
+  margin: 0 0 2.5rem;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.overview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  border-radius: var(--p-border-radius);
+  background: white;
+  box-shadow: var(--p-card-shadow);
+  text-decoration: none;
+  color: var(--p-text-color);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: box-shadow 150ms;
+  cursor: pointer;
+
+  i {
+    font-size: 2rem;
+    color: var(--p-primary-color);
+  }
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}

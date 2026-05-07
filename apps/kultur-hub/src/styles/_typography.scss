@@ -3,7 +3,6 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: var(--p-font-family);
   font-weight: 500;
   margin: 0;
   letter-spacing: 0em;
@@ -12,6 +11,6 @@ h5 {
 }
 
 p {
-  font-family: var(--p-font-family);
-  font-weight: 300;
+  font-weight: 400;
+  color: var(--p-text-color);
 }

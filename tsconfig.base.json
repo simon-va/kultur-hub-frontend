@@ -40,7 +40,9 @@
       ],
       "@kultur-hub/admin/ui": ["./libs/admin/ui/src/index.ts"],
       "@kultur-hub/public/feature-welcome": ["./libs/public/feature-welcome/src/index.ts"],
-      "@kultur-hub/public/feature-participate": ["./libs/public/feature-participate/src/index.ts"]
+      "@kultur-hub/public/feature-participate": ["./libs/public/feature-participate/src/index.ts"],
+      "@kultur-hub/portal/feature-overview": ["./libs/portal/feature-overview/src/index.ts"],
+      "@kultur-hub/portal/domain": ["./libs/portal/domain/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

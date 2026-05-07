@@ -1,0 +1,58 @@
+<header class="portal-header">
+  <div class="portal-header__inner tab">
+    <div class="portal-header__left">
+      <span class="portal-header__title">Kultur in Bocholt und Umgebung</span>
+    </div>
+    <div class="portal-header__right">
+      @if (store.selectedOrganisation(); as org) {
+        <span class="portal-header__org">{{ org.name }}</span>
+      }
+      <p-button
+        icon="pi pi-user"
+        [text]="true"
+        [rounded]="true"
+        severity="contrast"
+        (click)="profilePopover.toggle($event)"
+      />
+    </div>
+  </div>
+</header>
+
+<p-popover #profilePopover>
+  <div class="profile-panel">
+    <div class="profile-panel__name">
+      {{ userService.currentUser()?.firstName }} {{ userService.currentUser()?.lastName }}
+    </div>
+
+    @if (store.organisations().length > 0) {
+      <p-divider />
+      <div class="profile-panel__orgs">
+        @for (org of store.organisations(); track org.id) {
+          <button
+            class="profile-panel__org-item"
+            [class.profile-panel__org-item--active]="org.id === store.selectedOrganisationId()"
+            (click)="store.selectOrganisation(org.id)"
+          >
+            <i class="pi pi-sitemap"></i>
+            <span>{{ org.name }}</span>
+            @if (org.id === store.selectedOrganisationId()) {
+              <i class="pi pi-check profile-panel__org-check"></i>
+            }
+          </button>
+        }
+      </div>
+    }
+
+    <p-divider />
+
+    <p-button
+      label="Abmelden"
+      icon="pi pi-sign-out"
+      [text]="true"
+      size="small"
+      severity="danger"
+      styleClass="profile-panel__logout"
+      (click)="logout()"
+    />
+  </div>
+</p-popover>

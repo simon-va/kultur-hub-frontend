@@ -1,13 +1,10 @@
 {
-  "name": "portal-ui",
+  "name": "portal-feature-overview",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/portal/ui/src",
+  "sourceRoot": "libs/portal/feature-overview/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": [
-    "scope:portal",
-    "type:feature"
-  ],
+  "tags": ["scope:portal", "type:feature"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"

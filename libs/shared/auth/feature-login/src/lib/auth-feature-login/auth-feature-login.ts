@@ -3,20 +3,21 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService, UserService } from '@kultur-hub/shared/auth/data-access';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'lib-login-page',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, MessageModule],
+  imports: [ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule, MessageModule],
   templateUrl: './auth-feature-login.html',
   styleUrl: './auth-feature-login.scss',
 })
 export class LoginPage {
   private readonly supabase = inject(SupabaseService);
   private readonly userService = inject(UserService);
-  private readonly router = inject(Router);
+  protected readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
   readonly form = this.fb.nonNullable.group({
