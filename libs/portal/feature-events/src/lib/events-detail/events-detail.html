@@ -1,3 +1,4 @@
+<p-confirmdialog />
 @if (store.selectedEvent(); as ev) {
   <header class="detail-header">
     <div class="detail-header__left">
@@ -58,20 +59,20 @@
       severity="danger"
       [outlined]="true"
       icon="pi pi-trash"
-      [disabled]="true"
+      (click)="deleteEvent()"
     />
-    @if (ev.status === 1) {
+    @if (ev.status === EventStatus.Published) {
       <p-button
         label="Zurück zu Entwurf"
         severity="secondary"
         icon="pi pi-arrow-circle-left"
-        (click)="updateStatus(0)"
+        (click)="updateStatus(EventStatus.Draft)"
       />
     } @else {
       <p-button
         label="Veröffentlichen"
         icon="pi pi-send"
-        (click)="updateStatus(1)"
+        (click)="updateStatus(EventStatus.Published)"
       />
     }
   </footer>

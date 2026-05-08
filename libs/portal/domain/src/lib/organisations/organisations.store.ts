@@ -2,7 +2,7 @@ import { computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
 import { lastValueFrom } from 'rxjs';
-import { Client, CreateOrganisationRequest, OrganisationResponse } from '@kultur-hub/shared/api';
+import { OrganisationClient, CreateOrganisationRequest, OrganisationResponse } from '@kultur-hub/shared/api';
 import { UserService } from '@kultur-hub/shared/auth/data-access';
 
 const STORAGE_KEY = 'selectedOrganisationId';
@@ -10,11 +10,11 @@ const STORAGE_KEY = 'selectedOrganisationId';
 export const OrganisationsStore = signalStore(
   { providedIn: 'root' },
   withProps(() => {
-    const client = inject(Client);
+    const client = inject(OrganisationClient);
     const userService = inject(UserService);
     const resource = rxResource<OrganisationResponse[], string | undefined>({
       params: () => userService.currentUser()?.id,
-      stream: () => client.organisationsAll(),
+      stream: () => client.getOrganisations(),
     });
 
     const _selectedId = signal<string | null>(localStorage.getItem(STORAGE_KEY));
@@ -47,7 +47,7 @@ export const OrganisationsStore = signalStore(
       },
       createOrganisation: async (name: string) => {
         const created = await lastValueFrom(
-          client.organisationsPOST(new CreateOrganisationRequest({ name }))
+          client.createOrganisation(new CreateOrganisationRequest({ name }))
         );
         _selectedId.set(created.id);
         localStorage.setItem(STORAGE_KEY, created.id);

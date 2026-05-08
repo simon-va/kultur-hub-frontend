@@ -1,6 +1,7 @@
 import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { ConversationStore, EventsStore } from '@kultur-hub/portal/domain';
+import { MessageRole } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -14,6 +15,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 export class EventsChat {
   protected readonly eventsStore = inject(EventsStore);
   protected readonly conversationStore = inject(ConversationStore);
+  protected readonly MessageRole = MessageRole;
 
   protected readonly inputControl = inject(FormBuilder).nonNullable.control('');
 

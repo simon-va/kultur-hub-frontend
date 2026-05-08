@@ -15,7 +15,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
-export class Client {
+export class EventClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -28,7 +28,7 @@ export class Client {
     /**
      * @return OK
      */
-    eventsAll(organisationId: string): Observable<EventResponse[]> {
+    getEvents(organisationId: string): Observable<EventResponse[]> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -44,11 +44,11 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processEventsAll(response_);
+            return this.processGetEvents(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processEventsAll(response_ as any);
+                    return this.processGetEvents(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<EventResponse[]>;
                 }
@@ -57,7 +57,7 @@ export class Client {
         }));
     }
 
-    protected processEventsAll(response: HttpResponseBase): Observable<EventResponse[]> {
+    protected processGetEvents(response: HttpResponseBase): Observable<EventResponse[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -103,7 +103,7 @@ export class Client {
     /**
      * @return OK
      */
-    events(organisationId: string, eventId: string): Observable<EventResponse> {
+    getEventById(organisationId: string, eventId: string): Observable<EventResponse> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -122,11 +122,11 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processEvents(response_);
+            return this.processGetEventById(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processEvents(response_ as any);
+                    return this.processGetEventById(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<EventResponse>;
                 }
@@ -135,7 +135,7 @@ export class Client {
         }));
     }
 
-    protected processEvents(response: HttpResponseBase): Observable<EventResponse> {
+    protected processGetEventById(response: HttpResponseBase): Observable<EventResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -179,9 +179,83 @@ export class Client {
     }
 
     /**
+     * @return No Content
+     */
+    deleteEvent(organisationId: string, eventId: string): Observable<void> {
+        let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}";
+        if (organisationId === undefined || organisationId === null)
+            throw new globalThis.Error("The parameter 'organisationId' must be defined.");
+        url_ = url_.replace("{organisationId}", encodeURIComponent("" + organisationId));
+        if (eventId === undefined || eventId === null)
+            throw new globalThis.Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteEvent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteEvent(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteEvent(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = ProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = ProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @return Created
      */
-    initialize(organisationId: string): Observable<CreatedResponse> {
+    initializeEvent(organisationId: string): Observable<CreatedResponse> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/initialize";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -197,11 +271,11 @@ export class Client {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processInitialize(response_);
+            return this.processInitializeEvent(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processInitialize(response_ as any);
+                    return this.processInitializeEvent(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<CreatedResponse>;
                 }
@@ -210,7 +284,7 @@ export class Client {
         }));
     }
 
-    protected processInitialize(response: HttpResponseBase): Observable<CreatedResponse> {
+    protected processInitializeEvent(response: HttpResponseBase): Observable<CreatedResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -249,7 +323,7 @@ export class Client {
     /**
      * @return OK
      */
-    conversation(organisationId: string, eventId: string): Observable<ConversationResponse> {
+    getEventConversation(organisationId: string, eventId: string): Observable<ConversationResponse> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}/conversation";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -268,11 +342,11 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processConversation(response_);
+            return this.processGetEventConversation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processConversation(response_ as any);
+                    return this.processGetEventConversation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<ConversationResponse>;
                 }
@@ -281,7 +355,7 @@ export class Client {
         }));
     }
 
-    protected processConversation(response: HttpResponseBase): Observable<ConversationResponse> {
+    protected processGetEventConversation(response: HttpResponseBase): Observable<ConversationResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -327,7 +401,7 @@ export class Client {
     /**
      * @return OK
      */
-    messages(organisationId: string, eventId: string, body: SendMessageRequest): Observable<SendMessageResponse> {
+    sendEventMessage(organisationId: string, eventId: string, body: SendMessageRequest): Observable<SendMessageResponse> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}/conversation/messages";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -350,11 +424,11 @@ export class Client {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMessages(response_);
+            return this.processSendEventMessage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMessages(response_ as any);
+                    return this.processSendEventMessage(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<SendMessageResponse>;
                 }
@@ -363,7 +437,7 @@ export class Client {
         }));
     }
 
-    protected processMessages(response: HttpResponseBase): Observable<SendMessageResponse> {
+    protected processSendEventMessage(response: HttpResponseBase): Observable<SendMessageResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -409,7 +483,7 @@ export class Client {
     /**
      * @return No Content
      */
-    status(organisationId: string, eventId: string, body: UpdateEventStatusRequest): Observable<void> {
+    updateEventStatus(organisationId: string, eventId: string, body: UpdateEventStatusRequest): Observable<void> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}/status";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -431,11 +505,11 @@ export class Client {
         };
 
         return this.http.request("patch", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processStatus(response_);
+            return this.processUpdateEventStatus(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processStatus(response_ as any);
+                    return this.processUpdateEventStatus(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -444,7 +518,7 @@ export class Client {
         }));
     }
 
-    protected processStatus(response: HttpResponseBase): Observable<void> {
+    protected processUpdateEventStatus(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -490,11 +564,23 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+}
+
+@Injectable()
+export class AuthClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "http://localhost:5159/";
+    }
 
     /**
      * @return OK
      */
-    signup(body: SignUpRequest): Observable<AuthResponse> {
+    signUp(body: SignUpRequest): Observable<AuthResponse> {
         let url_ = this.baseUrl + "/auth/signup";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -511,11 +597,11 @@ export class Client {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSignup(response_);
+            return this.processSignUp(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSignup(response_ as any);
+                    return this.processSignUp(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<AuthResponse>;
                 }
@@ -524,7 +610,7 @@ export class Client {
         }));
     }
 
-    protected processSignup(response: HttpResponseBase): Observable<AuthResponse> {
+    protected processSignUp(response: HttpResponseBase): Observable<AuthResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -559,11 +645,23 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+}
+
+@Injectable()
+export class OrganisationClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "http://localhost:5159/";
+    }
 
     /**
      * @return OK
      */
-    organisationsAll(): Observable<OrganisationResponse[]> {
+    getOrganisations(): Observable<OrganisationResponse[]> {
         let url_ = this.baseUrl + "/organisations";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -576,11 +674,11 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processOrganisationsAll(response_);
+            return this.processGetOrganisations(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processOrganisationsAll(response_ as any);
+                    return this.processGetOrganisations(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<OrganisationResponse[]>;
                 }
@@ -589,7 +687,7 @@ export class Client {
         }));
     }
 
-    protected processOrganisationsAll(response: HttpResponseBase): Observable<OrganisationResponse[]> {
+    protected processGetOrganisations(response: HttpResponseBase): Observable<OrganisationResponse[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -628,7 +726,7 @@ export class Client {
     /**
      * @return Created
      */
-    organisationsPOST(body: CreateOrganisationRequest): Observable<CreatedResponse> {
+    createOrganisation(body: CreateOrganisationRequest): Observable<CreatedResponse> {
         let url_ = this.baseUrl + "/organisations";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -645,11 +743,11 @@ export class Client {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processOrganisationsPOST(response_);
+            return this.processCreateOrganisation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processOrganisationsPOST(response_ as any);
+                    return this.processCreateOrganisation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<CreatedResponse>;
                 }
@@ -658,7 +756,7 @@ export class Client {
         }));
     }
 
-    protected processOrganisationsPOST(response: HttpResponseBase): Observable<CreatedResponse> {
+    protected processCreateOrganisation(response: HttpResponseBase): Observable<CreatedResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -697,7 +795,7 @@ export class Client {
     /**
      * @return No Content
      */
-    organisationsPUT(id: string, body: UpdateOrganisationRequest): Observable<void> {
+    updateOrganisation(id: string, body: UpdateOrganisationRequest): Observable<void> {
         let url_ = this.baseUrl + "/organisations/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -716,11 +814,11 @@ export class Client {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processOrganisationsPUT(response_);
+            return this.processUpdateOrganisation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processOrganisationsPUT(response_ as any);
+                    return this.processUpdateOrganisation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -729,7 +827,7 @@ export class Client {
         }));
     }
 
-    protected processOrganisationsPUT(response: HttpResponseBase): Observable<void> {
+    protected processUpdateOrganisation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -779,7 +877,7 @@ export class Client {
     /**
      * @return No Content
      */
-    organisationsDELETE(id: string): Observable<void> {
+    deleteOrganisation(id: string): Observable<void> {
         let url_ = this.baseUrl + "/organisations/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -794,11 +892,11 @@ export class Client {
         };
 
         return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processOrganisationsDELETE(response_);
+            return this.processDeleteOrganisation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processOrganisationsDELETE(response_ as any);
+                    return this.processDeleteOrganisation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -807,7 +905,7 @@ export class Client {
         }));
     }
 
-    protected processOrganisationsDELETE(response: HttpResponseBase): Observable<void> {
+    protected processDeleteOrganisation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -846,11 +944,23 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+}
+
+@Injectable()
+export class UserClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "http://localhost:5159/";
+    }
 
     /**
      * @return OK
      */
-    users(userId: string): Observable<UserResponse> {
+    getUser(userId: string): Observable<UserResponse> {
         let url_ = this.baseUrl + "/users/{userId}";
         if (userId === undefined || userId === null)
             throw new globalThis.Error("The parameter 'userId' must be defined.");
@@ -866,11 +976,11 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUsers(response_);
+            return this.processGetUser(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUsers(response_ as any);
+                    return this.processGetUser(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<UserResponse>;
                 }
@@ -879,7 +989,7 @@ export class Client {
         }));
     }
 
-    protected processUsers(response: HttpResponseBase): Observable<UserResponse> {
+    protected processGetUser(response: HttpResponseBase): Observable<UserResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -914,11 +1024,23 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+}
+
+@Injectable()
+export class InvitationClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "http://localhost:5159/";
+    }
 
     /**
      * @return Created
      */
-    invitations(): Observable<CreateInvitationResponse> {
+    createInvitation(): Observable<CreateInvitationResponse> {
         let url_ = this.baseUrl + "/admin/invitations";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -931,11 +1053,11 @@ export class Client {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processInvitations(response_);
+            return this.processCreateInvitation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processInvitations(response_ as any);
+                    return this.processCreateInvitation(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<CreateInvitationResponse>;
                 }
@@ -944,7 +1066,7 @@ export class Client {
         }));
     }
 
-    protected processInvitations(response: HttpResponseBase): Observable<CreateInvitationResponse> {
+    protected processCreateInvitation(response: HttpResponseBase): Observable<CreateInvitationResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1273,7 +1395,7 @@ export class EventResponse implements IEventResponse {
     address!: string;
     description!: string;
     createdAt!: string;
-    status!: number;
+    status!: EventStatus;
     errorMessage!: string | undefined;
     eventCategoryId!: string | undefined;
     conversationId!: string | undefined;
@@ -1348,12 +1470,19 @@ export interface IEventResponse {
     address: string;
     description: string;
     createdAt: string;
-    status: number;
+    status: EventStatus;
     errorMessage: string | undefined;
     eventCategoryId: string | undefined;
     conversationId: string | undefined;
 
     [key: string]: any;
+}
+
+export enum EventStatus {
+    Draft = "Draft",
+    Published = "Published",
+    Failed = "Failed",
+    ReadyToPublish = "ReadyToPublish",
 }
 
 export class HttpValidationProblemDetails implements IHttpValidationProblemDetails {
@@ -1438,7 +1567,7 @@ export interface IHttpValidationProblemDetails {
 
 export class MessageResponse implements IMessageResponse {
     id!: string;
-    role!: number;
+    role!: MessageRole;
     content!: string;
     createdAt!: string;
 
@@ -1489,11 +1618,16 @@ export class MessageResponse implements IMessageResponse {
 
 export interface IMessageResponse {
     id: string;
-    role: number;
+    role: MessageRole;
     content: string;
     createdAt: string;
 
     [key: string]: any;
+}
+
+export enum MessageRole {
+    System = "System",
+    User = "User",
 }
 
 export class OrganisationResponse implements IOrganisationResponse {
@@ -1781,7 +1915,7 @@ export interface ISignUpRequest {
 }
 
 export class UpdateEventStatusRequest implements IUpdateEventStatusRequest {
-    status!: number;
+    status!: EventStatus;
 
     [key: string]: any;
 
@@ -1823,7 +1957,7 @@ export class UpdateEventStatusRequest implements IUpdateEventStatusRequest {
 }
 
 export interface IUpdateEventStatusRequest {
-    status: number;
+    status: EventStatus;
 
     [key: string]: any;
 }

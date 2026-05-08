@@ -3,9 +3,10 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
 import { EMPTY, lastValueFrom } from 'rxjs';
 import {
-  Client,
+  EventClient,
   ConversationResponse,
   MessageResponse,
+  MessageRole,
   SendMessageRequest,
 } from '@kultur-hub/shared/api';
 import { OrganisationsStore } from '../organisations/organisations.store';
@@ -14,7 +15,7 @@ import { EventsStore } from './events.store';
 export const ConversationStore = signalStore(
   { providedIn: 'root' },
   withProps(() => {
-    const client = inject(Client);
+    const client = inject(EventClient);
     const organisationsStore = inject(OrganisationsStore);
     const eventsStore = inject(EventsStore);
 
@@ -29,7 +30,7 @@ export const ConversationStore = signalStore(
       },
       stream: ({ params }) => {
         if (!params) return EMPTY;
-        return client.conversation(params.orgId, params.eventId);
+        return client.getEventConversation(params.orgId, params.eventId);
       },
     });
 
@@ -57,20 +58,20 @@ export const ConversationStore = signalStore(
         const optimisticId = crypto.randomUUID();
         _extraMessages.update(msgs => [
           ...msgs,
-          new MessageResponse({ id: optimisticId, role: 2, content, createdAt: new Date().toISOString() }),
+          new MessageResponse({ id: optimisticId, role: MessageRole.User, content, createdAt: new Date().toISOString() }),
         ]);
 
         _sending.set(true);
         try {
           const response = await lastValueFrom(
-            client.messages(orgId, eventId, new SendMessageRequest({ content }))
+            client.sendEventMessage(orgId, eventId, new SendMessageRequest({ content }))
           );
           _extraMessages.update(msgs => [
             ...msgs.filter(m => m.id !== optimisticId),
             response.userMessage,
             response.botMessage,
           ]);
-          const updatedEvent = await lastValueFrom(client.events(orgId, eventId));
+          const updatedEvent = await lastValueFrom(client.getEventById(orgId, eventId));
           eventsStore.patchEvent(updatedEvent);
         } catch {
           _extraMessages.update(msgs => msgs.filter(m => m.id !== optimisticId));

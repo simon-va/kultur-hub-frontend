@@ -2,20 +2,20 @@ import { computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
 import { EMPTY, lastValueFrom } from 'rxjs';
-import { Client, EventResponse, UpdateEventStatusRequest } from '@kultur-hub/shared/api';
+import { EventClient, EventResponse, EventStatus, UpdateEventStatusRequest } from '@kultur-hub/shared/api';
 import { OrganisationsStore } from '../organisations/organisations.store';
 
 export const EventsStore = signalStore(
   { providedIn: 'root' },
   withProps(() => {
-    const client = inject(Client);
+    const client = inject(EventClient);
     const organisationsStore = inject(OrganisationsStore);
 
     const resource = rxResource<EventResponse[], string | null>({
       params: () => organisationsStore.selectedOrganisationId(),
       stream: ({ params: orgId }) => {
         if (!orgId) return EMPTY;
-        return client.eventsAll(orgId);
+        return client.getEvents(orgId);
       },
     });
 
@@ -56,18 +56,25 @@ export const EventsStore = signalStore(
       patchEvent: (event: EventResponse) => {
         _localUpdates.update(map => new Map(map).set(event.id, event));
       },
-      updateEventStatus: async (eventId: string, status: number) => {
+      updateEventStatus: async (eventId: string, status: EventStatus) => {
         const orgId = organisationsStore.selectedOrganisationId();
         if (!orgId) return;
         await lastValueFrom(
-          client.status(orgId, eventId, UpdateEventStatusRequest.fromJS({ status }))
+          client.updateEventStatus(orgId, eventId, new UpdateEventStatusRequest({ status }))
         );
+        resource.reload();
+      },
+      deleteEvent: async (eventId: string) => {
+        const orgId = organisationsStore.selectedOrganisationId();
+        if (!orgId) return;
+        await lastValueFrom(client.deleteEvent(orgId, eventId));
+        _selectedId.set(null);
         resource.reload();
       },
       initializeEvent: async () => {
         const orgId = organisationsStore.selectedOrganisationId();
         if (!orgId) return;
-        const created = await lastValueFrom(client.initialize(orgId));
+        const created = await lastValueFrom(client.initializeEvent(orgId));
         resource.reload();
         _selectedId.set(created.id);
       },
