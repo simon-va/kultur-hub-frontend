@@ -1,8 +1,8 @@
-import { computed, inject, signal } from '@angular/core';
+import { computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
 import { EMPTY, lastValueFrom } from 'rxjs';
-import { Client, EventResponse } from '@kultur-hub/shared/api';
+import { Client, EventResponse, UpdateEventStatusRequest } from '@kultur-hub/shared/api';
 import { OrganisationsStore } from '../organisations/organisations.store';
 
 export const EventsStore = signalStore(
@@ -15,11 +15,17 @@ export const EventsStore = signalStore(
       params: () => organisationsStore.selectedOrganisationId(),
       stream: ({ params: orgId }) => {
         if (!orgId) return EMPTY;
-        return client.events(orgId);
+        return client.eventsAll(orgId);
       },
     });
 
     const _selectedId = signal<string | null>(null);
+    const _localUpdates = signal<Map<string, EventResponse>>(new Map());
+
+    effect(() => {
+      resource.value();
+      _localUpdates.set(new Map());
+    }, { allowSignalWrites: true });
 
     const selectedEventId = computed<string | null>(() => {
       const events = resource.value();
@@ -29,16 +35,35 @@ export const EventsStore = signalStore(
     });
 
     return {
-      events: computed<EventResponse[]>(() => resource.value() ?? []),
+      events: computed<EventResponse[]>(() => {
+        const evs = resource.value() ?? [];
+        const updates = _localUpdates();
+        if (updates.size === 0) return evs;
+        return evs.map(e => updates.get(e.id) ?? e);
+      }),
       loading: resource.isLoading,
       hasLoaded: computed<boolean>(() => resource.value() !== undefined),
       selectedEventId,
       selectedEvent: computed<EventResponse | null>(() => {
         const id = selectedEventId();
-        return (resource.value() ?? []).find((e) => e.id === id) ?? null;
+        const updates = _localUpdates();
+        const evs = resource.value() ?? [];
+        const base = evs.find((e) => e.id === id) ?? null;
+        return base ? (updates.get(base.id) ?? base) : null;
       }),
       selectEvent: (id: string) => _selectedId.set(id),
       clearSelection: () => _selectedId.set(null),
+      patchEvent: (event: EventResponse) => {
+        _localUpdates.update(map => new Map(map).set(event.id, event));
+      },
+      updateEventStatus: async (eventId: string, status: number) => {
+        const orgId = organisationsStore.selectedOrganisationId();
+        if (!orgId) return;
+        await lastValueFrom(
+          client.status(orgId, eventId, UpdateEventStatusRequest.fromJS({ status }))
+        );
+        resource.reload();
+      },
       initializeEvent: async () => {
         const orgId = organisationsStore.selectedOrganisationId();
         if (!orgId) return;

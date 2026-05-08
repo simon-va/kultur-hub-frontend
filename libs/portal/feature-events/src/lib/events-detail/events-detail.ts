@@ -24,6 +24,12 @@ export class EventsDetail {
     }
   }
 
+  protected updateStatus(status: number): void {
+    const ev = this.store.selectedEvent();
+    if (!ev) return;
+    this.store.updateEventStatus(ev.id, status);
+  }
+
   protected statusSeverity(status: number): 'secondary' | 'success' | 'danger' | 'warn' {
     switch (status) {
       case 0: return 'secondary';

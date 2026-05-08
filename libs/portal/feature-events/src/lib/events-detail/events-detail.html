@@ -65,13 +65,13 @@
         label="Zurück zu Entwurf"
         severity="secondary"
         icon="pi pi-arrow-circle-left"
-        [disabled]="true"
+        (click)="updateStatus(0)"
       />
     } @else {
       <p-button
         label="Veröffentlichen"
         icon="pi pi-send"
-        [disabled]="true"
+        (click)="updateStatus(1)"
       />
     }
   </footer>

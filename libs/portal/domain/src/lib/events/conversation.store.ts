@@ -70,6 +70,8 @@ export const ConversationStore = signalStore(
             response.userMessage,
             response.botMessage,
           ]);
+          const updatedEvent = await lastValueFrom(client.events(orgId, eventId));
+          eventsStore.patchEvent(updatedEvent);
         } catch {
           _extraMessages.update(msgs => msgs.filter(m => m.id !== optimisticId));
         } finally {
