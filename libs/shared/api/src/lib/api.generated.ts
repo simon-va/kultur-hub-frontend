@@ -249,7 +249,7 @@ export class Client {
     /**
      * @return OK
      */
-    messages(organisationId: string, eventId: string, body: SendMessageRequest): Observable<MessageResponse> {
+    messages(organisationId: string, eventId: string, body: SendMessageRequest): Observable<SendMessageResponse> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events/{eventId}/conversation/messages";
         if (organisationId === undefined || organisationId === null)
             throw new globalThis.Error("The parameter 'organisationId' must be defined.");
@@ -278,14 +278,14 @@ export class Client {
                 try {
                     return this.processMessages(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<MessageResponse>;
+                    return _observableThrow(e) as any as Observable<SendMessageResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<MessageResponse>;
+                return _observableThrow(response_) as any as Observable<SendMessageResponse>;
         }));
     }
 
-    protected processMessages(response: HttpResponseBase): Observable<MessageResponse> {
+    protected processMessages(response: HttpResponseBase): Observable<SendMessageResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -296,7 +296,7 @@ export class Client {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = MessageResponse.fromJS(resultData200);
+            result200 = SendMessageResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status === 401) {
@@ -1413,6 +1413,62 @@ export class SendMessageRequest implements ISendMessageRequest {
 
 export interface ISendMessageRequest {
     content: string;
+
+    [key: string]: any;
+}
+
+export class SendMessageResponse implements ISendMessageResponse {
+    userMessage!: MessageResponse;
+    botMessage!: MessageResponse;
+
+    [key: string]: any;
+
+    constructor(data?: ISendMessageResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.userMessage = new MessageResponse();
+            this.botMessage = new MessageResponse();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.userMessage = _data["userMessage"] ? MessageResponse.fromJS(_data["userMessage"]) : new MessageResponse();
+            this.botMessage = _data["botMessage"] ? MessageResponse.fromJS(_data["botMessage"]) : new MessageResponse();
+        }
+    }
+
+    static fromJS(data: any): SendMessageResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendMessageResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["userMessage"] = this.userMessage ? this.userMessage.toJSON() : undefined as any;
+        data["botMessage"] = this.botMessage ? this.botMessage.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISendMessageResponse {
+    userMessage: MessageResponse;
+    botMessage: MessageResponse;
 
     [key: string]: any;
 }

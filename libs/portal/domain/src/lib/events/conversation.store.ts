@@ -1,4 +1,4 @@
-import { computed, inject, signal } from '@angular/core';
+import { computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
 import { EMPTY, lastValueFrom } from 'rxjs';
@@ -34,22 +34,44 @@ export const ConversationStore = signalStore(
     });
 
     const _sending = signal(false);
+    const _extraMessages = signal<MessageResponse[]>([]);
+
+    effect(() => {
+      eventsStore.selectedEventId();
+      _extraMessages.set([]);
+    }, { allowSignalWrites: true });
 
     return {
       conversation: computed<ConversationResponse | null>(() => resource.value() ?? null),
-      messages: computed<MessageResponse[]>(() => resource.value()?.messages ?? []),
+      messages: computed<MessageResponse[]>(() => [
+        ...(resource.value()?.messages ?? []),
+        ..._extraMessages(),
+      ]),
       loading: resource.isLoading,
       sending: _sending.asReadonly(),
       sendMessage: async (content: string) => {
         const orgId = organisationsStore.selectedOrganisationId();
         const eventId = eventsStore.selectedEventId();
         if (!orgId || !eventId) return;
+
+        const optimisticId = crypto.randomUUID();
+        _extraMessages.update(msgs => [
+          ...msgs,
+          new MessageResponse({ id: optimisticId, role: 2, content, createdAt: new Date().toISOString() }),
+        ]);
+
         _sending.set(true);
         try {
-          await lastValueFrom(
+          const response = await lastValueFrom(
             client.messages(orgId, eventId, new SendMessageRequest({ content }))
           );
-          resource.reload();
+          _extraMessages.update(msgs => [
+            ...msgs.filter(m => m.id !== optimisticId),
+            response.userMessage,
+            response.botMessage,
+          ]);
+        } catch {
+          _extraMessages.update(msgs => msgs.filter(m => m.id !== optimisticId));
         } finally {
           _sending.set(false);
         }
