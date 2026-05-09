@@ -15,6 +15,18 @@
       </div>
     }
   }
+  @if (conversationStore.sending()) {
+    <div class="msg msg--assistant">
+      <div class="msg__avatar">AI</div>
+      <div class="msg__bubble">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  }
   @if (conversationStore.sendError(); as error) {
     <div class="chat-error">
       <span>{{ error }}</span>
@@ -25,6 +37,7 @@
 
 <div class="chat-input-area">
   <textarea
+    #textareaRef
     pTextarea
     [formControl]="inputControl"
     placeholder="Änderungen beschreiben…"

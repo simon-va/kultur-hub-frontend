@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { ConversationStore, EventsStore } from '@kultur-hub/portal/domain';
 import { MessageRole } from '@kultur-hub/shared/api';
@@ -20,6 +20,9 @@ export class EventsChat {
   protected readonly inputControl = inject(FormBuilder).nonNullable.control('');
 
   protected readonly messagesContainerRef = viewChild<ElementRef>('messagesContainer');
+  protected readonly textareaRef = viewChild<ElementRef>('textareaRef');
+
+  private readonly lastMessageText = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -29,11 +32,27 @@ export class EventsChat {
         if (el) el.scrollTop = el.scrollHeight;
       }, 0);
     });
+
+    effect(() => {
+      if (this.conversationStore.sendError() && this.lastMessageText()) {
+        this.inputControl.setValue(this.lastMessageText()!);
+        this.lastMessageText.set(null);
+        setTimeout(() => {
+          const el = this.textareaRef()?.nativeElement;
+          if (el) {
+            el.focus();
+            el.style.height = 'auto';
+            el.style.height = `${el.scrollHeight}px`;
+          }
+        }, 0);
+      }
+    });
   }
 
   protected async send(): Promise<void> {
     const text = this.inputControl.value.trim();
     if (!text || !this.eventsStore.selectedEventId()) return;
+    this.lastMessageText.set(text);
     this.inputControl.reset();
     await this.conversationStore.sendMessage(text);
   }

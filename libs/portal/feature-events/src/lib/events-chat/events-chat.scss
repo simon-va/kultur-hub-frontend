@@ -89,6 +89,55 @@
   }
 }
 
+.typing-indicator {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  height: 1.2rem;
+
+  span {
+    width: 6px;
+    height: 6px;
+    background: var(--p-text-muted-color, #999);
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+}
+
+.chat-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--p-red-50, #fff5f5);
+  border: 1px solid var(--p-red-200, #feb2b2);
+  border-radius: var(--p-border-radius, 6px);
+  color: var(--p-red-700, #c53030);
+  font-size: 0.8125rem;
+
+  span {
+    flex: 1;
+  }
+}
+
 .chat-input-area {
   padding: 0.875rem 1.25rem;
   border-top: 1px solid var(--p-surface-border, #e5e5e5);

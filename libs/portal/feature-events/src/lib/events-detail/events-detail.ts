@@ -49,10 +49,13 @@ export class EventsDetail {
     this.confirmationService.confirm({
       message: `Soll die Veranstaltung "${ev.title || 'Neue Veranstaltung'}" wirklich gelöscht werden?`,
       header: 'Veranstaltung löschen',
-      icon: 'pi pi-trash',
       acceptButtonStyleClass: 'p-button-danger',
       acceptLabel: 'Löschen',
-      rejectLabel: 'Abbrechen',
+      rejectButtonProps: {
+        label: 'Abbrechen',
+        severity: 'secondary',
+        outlined: true
+      },
       accept: async () => {
         await this.store.deleteEvent(ev.id);
       },

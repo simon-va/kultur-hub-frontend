@@ -1,14 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { EventsStore, EventCategoriesStore } from '@kultur-hub/portal/domain';
+import { EventCategoriesStore, EventsStore } from '@kultur-hub/portal/domain';
 import { EventStatus } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 
-type FilterValue = 'all' | 'draft' | 'published';
+type FilterValue = 'all' | 'unpublished' | 'published';
 
 @Component({
   selector: 'lib-events-sidebar',
@@ -23,7 +22,7 @@ export class EventsSidebar {
 
   protected readonly filterOptions: { label: string; value: FilterValue }[] = [
     { label: 'Alle', value: 'all' },
-    { label: 'Entwurf', value: 'draft' },
+    { label: 'Unveröffentlicht', value: 'unpublished' },
     { label: 'Veröffentlicht', value: 'published' },
   ];
 
@@ -33,8 +32,12 @@ export class EventsSidebar {
     const f = this.filterValue();
     const events = this.store.overviewEvents();
     if (f === 'all') return events;
-    const status = f === 'draft' ? EventStatus.Draft : EventStatus.Published;
-    return events.filter((e) => e.status === status);
+    if (f === 'unpublished') {
+      return events.filter(
+        (e) => e.status === EventStatus.Draft || e.status === EventStatus.ReadyToPublish
+      );
+    }
+    return events.filter((e) => e.status === EventStatus.Published);
   });
 
   protected statusLabel(status: EventStatus): string {
