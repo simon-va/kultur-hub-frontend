@@ -54,6 +54,10 @@ export class EventsChat {
     if (!text || !this.eventsStore.selectedEventId()) return;
     this.lastMessageText.set(text);
     this.inputControl.reset();
+    const el = this.textareaRef()?.nativeElement;
+    if (el) {
+      el.style.height = '';
+    }
     await this.conversationStore.sendMessage(text);
   }
 

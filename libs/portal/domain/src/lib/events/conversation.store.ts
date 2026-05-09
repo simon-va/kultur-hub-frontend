@@ -80,6 +80,7 @@ export const ConversationStore = signalStore(
               response.botMessage,
             ]);
             eventsStore.reloadSelectedEvent();
+            eventsStore.reloadOverview();
           }
         } catch {
           if (eventsStore.selectedEventId() === eventId) {

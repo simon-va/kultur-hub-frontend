@@ -63,6 +63,7 @@ export const EventsStore = signalStore(
       selectEvent: (id: string) => _selectedId.set(id),
       clearSelection: () => _selectedId.set(null),
       reloadSelectedEvent: () => detailResource.reload(),
+      reloadOverview: () => overviewResource.reload(),
       updateEventStatus: async (eventId: string, status: EventStatus) => {
         const orgId = organisationsStore.selectedOrganisationId();
         if (!orgId) return;
