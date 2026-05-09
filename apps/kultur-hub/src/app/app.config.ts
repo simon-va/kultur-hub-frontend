@@ -25,7 +25,7 @@ const KulturHubPreset = definePreset(Aura, {
 });
 import { authInterceptor, httpErrorInterceptor, SUPABASE_URL, SUPABASE_ANON_KEY } from '@kultur-hub/shared/auth/data-access';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { API_BASE_URL, EventClient, OrganisationClient, UserClient } from '@kultur-hub/shared/api';
+import { API_BASE_URL, AuthClient, EventClient, OrganisationClient, UserClient } from '@kultur-hub/shared/api';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 
@@ -46,6 +46,7 @@ export const appConfig: ApplicationConfig = {
     { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
     ConfirmationService,
     MessageService,
+    AuthClient,
     EventClient,
     OrganisationClient,
     UserClient,

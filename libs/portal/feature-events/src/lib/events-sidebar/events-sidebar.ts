@@ -5,13 +5,14 @@ import { EventsStore, EventCategoriesStore } from '@kultur-hub/portal/domain';
 import { EventStatus } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 
 type FilterValue = 'all' | 'draft' | 'published';
 
 @Component({
   selector: 'lib-events-sidebar',
-  imports: [FormsModule, DatePipe, ButtonModule, SelectButtonModule, TagModule],
+  imports: [FormsModule, DatePipe, ButtonModule, SelectButtonModule, SkeletonModule, TagModule],
   templateUrl: './events-sidebar.html',
   styleUrl: './events-sidebar.scss',
 })

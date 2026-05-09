@@ -21,6 +21,12 @@
       </div>
     }
   }
+  @if (conversationStore.sendError(); as error) {
+    <div class="chat-error">
+      <span>{{ error }}</span>
+      <p-button icon="pi pi-times" [text]="true" (click)="conversationStore.clearSendError()" />
+    </div>
+  }
 </div>
 
 <div class="chat-input-area">

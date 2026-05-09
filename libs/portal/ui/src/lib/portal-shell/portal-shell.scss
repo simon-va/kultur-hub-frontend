@@ -10,3 +10,29 @@ main {
   display: flex;
   overflow-y: auto;
 }
+
+.portal-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex: 1;
+  padding: 2rem;
+  text-align: center;
+
+  i {
+    color: var(--p-red-500);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--p-text-color);
+  }
+
+  p {
+    margin: 0;
+    color: var(--p-text-muted-color);
+  }
+}

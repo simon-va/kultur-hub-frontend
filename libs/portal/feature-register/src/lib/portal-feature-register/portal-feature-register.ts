@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { AuthClient, SignUpRequest } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { SignUpRequest } from '@kultur-hub/shared/domain';
-import { finalize } from 'rxjs/operators';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'lib-register-page',
@@ -15,7 +14,7 @@ import { finalize } from 'rxjs/operators';
   styleUrl: './portal-feature-register.scss',
 })
 export class RegisterPage {
-  private readonly http = inject(HttpClient);
+  private readonly authClient = inject(AuthClient);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
@@ -29,17 +28,17 @@ export class RegisterPage {
 
   readonly loading = signal(false);
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
     this.loading.set(true);
 
-    const body: SignUpRequest = this.form.getRawValue();
-
-    this.http.post('/api/signup', body).pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: () => this.router.navigate(['/login']),
-    });
+    try {
+      const body = new SignUpRequest(this.form.getRawValue());
+      await lastValueFrom(this.authClient.signUp(body));
+      this.router.navigate(['/login']);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }
