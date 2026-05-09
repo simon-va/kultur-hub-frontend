@@ -1,7 +1,7 @@
 import { computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
-import { EMPTY, lastValueFrom } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { EventClient, EventResponse, EventStatus, UpdateEventStatusRequest } from '@kultur-hub/shared/api';
 import { OrganisationsStore } from '../organisations/organisations.store';
 
@@ -14,7 +14,7 @@ export const EventsStore = signalStore(
     const resource = rxResource<EventResponse[], string | null>({
       params: () => organisationsStore.selectedOrganisationId(),
       stream: ({ params: orgId }) => {
-        if (!orgId) return EMPTY;
+        if (!orgId) return of([]);
         return client.getEvents(orgId);
       },
     });

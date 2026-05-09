@@ -28,6 +28,64 @@ export class EventClient {
     /**
      * @return OK
      */
+    getEventCategories(): Observable<EventCategoryResponse[]> {
+        let url_ = this.baseUrl + "/event-categories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEventCategories(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEventCategories(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<EventCategoryResponse[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<EventCategoryResponse[]>;
+        }));
+    }
+
+    protected processGetEventCategories(response: HttpResponseBase): Observable<EventCategoryResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(EventCategoryResponse.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     getEvents(organisationId: string): Observable<EventResponse[]> {
         let url_ = this.baseUrl + "/organisations/{organisationId}/events";
         if (organisationId === undefined || organisationId === null)
@@ -1386,18 +1444,74 @@ export interface ICreateOrganisationRequest {
     [key: string]: any;
 }
 
+export class EventCategoryResponse implements IEventCategoryResponse {
+    id!: number;
+    name!: string;
+    color!: string;
+
+    [key: string]: any;
+
+    constructor(data?: IEventCategoryResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.color = _data["color"];
+        }
+    }
+
+    static fromJS(data: any): EventCategoryResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new EventCategoryResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        return data;
+    }
+}
+
+export interface IEventCategoryResponse {
+    id: number;
+    name: string;
+    color: string;
+
+    [key: string]: any;
+}
+
 export class EventResponse implements IEventResponse {
     id!: string;
     organisationId!: string;
-    title!: string;
+    title!: string | undefined;
     startTime!: string | undefined;
     endTime!: string | undefined;
-    address!: string;
-    description!: string;
+    address!: string | undefined;
+    description!: string | undefined;
     createdAt!: string;
     status!: EventStatus;
     errorMessage!: string | undefined;
-    eventCategoryId!: string | undefined;
+    eventCategoryId!: number | undefined;
     conversationId!: string | undefined;
 
     [key: string]: any;
@@ -1464,15 +1578,15 @@ export class EventResponse implements IEventResponse {
 export interface IEventResponse {
     id: string;
     organisationId: string;
-    title: string;
+    title: string | undefined;
     startTime: string | undefined;
     endTime: string | undefined;
-    address: string;
-    description: string;
+    address: string | undefined;
+    description: string | undefined;
     createdAt: string;
     status: EventStatus;
     errorMessage: string | undefined;
-    eventCategoryId: string | undefined;
+    eventCategoryId: number | undefined;
     conversationId: string | undefined;
 
     [key: string]: any;
@@ -1628,6 +1742,7 @@ export interface IMessageResponse {
 export enum MessageRole {
     System = "System",
     User = "User",
+    Assistant = "Assistant",
 }
 
 export class OrganisationResponse implements IOrganisationResponse {

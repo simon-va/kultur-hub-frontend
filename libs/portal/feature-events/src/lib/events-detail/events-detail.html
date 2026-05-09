@@ -15,6 +15,15 @@
     <h2 class="detail-title">{{ ev.title || 'Neue Veranstaltung' }}</h2>
     <p-divider />
 
+    @if (selectedCategory(); as cat) {
+      <div class="detail-field">
+        <div class="detail-label">Kategorie</div>
+        <div class="detail-value">
+          <span class="category-badge" [style.background-color]="cat.color">{{ cat.name }}</span>
+        </div>
+      </div>
+    }
+
     @if (ev.description) {
       <div class="detail-field">
         <div class="detail-label">Beschreibung</div>

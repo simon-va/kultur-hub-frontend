@@ -1,12 +1,12 @@
-import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { EventsStore } from '@kultur-hub/portal/domain';
+import { Component, computed, effect, inject } from '@angular/core';
+import { EventCategoriesStore, EventsStore } from '@kultur-hub/portal/domain';
 import { EventStatus } from '@kultur-hub/shared/api';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
+import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
@@ -17,8 +17,23 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class EventsDetail {
   protected readonly store = inject(EventsStore);
+  protected readonly categoriesStore = inject(EventCategoriesStore);
   protected readonly EventStatus = EventStatus;
   private readonly confirmationService = inject(ConfirmationService);
+
+  protected readonly selectedCategory = computed(() => {
+    const event = this.store.selectedEvent();
+    if (!event?.eventCategoryId) return null;
+    return this.categoriesStore.categories().find((c) => c.id === event.eventCategoryId) ?? null;
+  });
+
+  constructor() {
+    effect(() => {
+      // Debug logging for event categories loading
+      console.log('selectedCategory:', this.selectedCategory());
+      console.log('categories:', this.categoriesStore.categories());
+    });
+  }
 
   protected statusLabel(status: EventStatus): string {
     switch (status) {

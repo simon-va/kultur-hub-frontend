@@ -82,6 +82,15 @@
   flex-shrink: 0;
 }
 
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--p-border-radius, 6px);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+}
+
 .detail-empty {
   display: flex;
   flex-direction: column;

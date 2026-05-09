@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { EventsStore } from '@kultur-hub/portal/domain';
+import { EventsStore, EventCategoriesStore } from '@kultur-hub/portal/domain';
 import { EventStatus } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -17,6 +17,7 @@ type FilterValue = 'all' | 'draft' | 'published';
 })
 export class EventsSidebar {
   protected readonly store = inject(EventsStore);
+  private readonly _categoriesStore = inject(EventCategoriesStore);
   protected readonly EventStatus = EventStatus;
 
   protected readonly filterOptions: { label: string; value: FilterValue }[] = [

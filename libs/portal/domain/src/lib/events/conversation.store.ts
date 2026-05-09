@@ -1,7 +1,7 @@
 import { computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { signalStore, withProps } from '@ngrx/signals';
-import { EMPTY, lastValueFrom } from 'rxjs';
+import { EMPTY, lastValueFrom, of } from 'rxjs';
 import {
   EventClient,
   ConversationResponse,
