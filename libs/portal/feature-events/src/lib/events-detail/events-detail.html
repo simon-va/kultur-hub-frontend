@@ -69,11 +69,19 @@
         (click)="updateStatus(EventStatus.Draft)"
       />
     } @else {
-      <p-button
-        label="Veröffentlichen"
-        icon="pi pi-send"
-        (click)="updateStatus(EventStatus.Published)"
-      />
+      <span
+        pTooltip="Bitte stelle erst alle Informationen zur Veranstaltung bereit."
+        tooltipPosition="top"
+        [tooltipDisabled]="ev.status !== EventStatus.Draft"
+        style="display: inline-block"
+      >
+        <p-button
+          label="Veröffentlichen"
+          icon="pi pi-send"
+          [disabled]="ev.status === EventStatus.Draft"
+          (click)="updateStatus(EventStatus.Published)"
+        />
+      </span>
     }
   </footer>
 } @else {

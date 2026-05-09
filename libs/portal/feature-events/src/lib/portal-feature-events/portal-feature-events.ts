@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { EventsStore } from '@kultur-hub/portal/domain';
 import { EventsSidebar } from '../events-sidebar/events-sidebar';
 import { EventsChat } from '../events-chat/events-chat';
 import { EventsDetail } from '../events-detail/events-detail';
@@ -9,4 +10,6 @@ import { EventsDetail } from '../events-detail/events-detail';
   templateUrl: './portal-feature-events.html',
   styleUrl: './portal-feature-events.scss',
 })
-export class PortalFeatureEvents {}
+export class PortalFeatureEvents {
+  protected readonly eventsStore = inject(EventsStore);
+}

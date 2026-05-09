@@ -1,3 +1,9 @@
 <lib-events-sidebar />
-<lib-events-chat />
-<lib-events-detail />
+@if (eventsStore.selectedEvent()) {
+  <lib-events-chat />
+  <lib-events-detail />
+} @else {
+  <div class="events-empty">
+    <span>Wähle eine Veranstaltung aus oder erstelle eine neue.</span>
+  </div>
+}

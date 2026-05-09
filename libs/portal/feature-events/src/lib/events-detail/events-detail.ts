@@ -7,10 +7,11 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'lib-events-detail',
-  imports: [DatePipe, ButtonModule, ConfirmDialog, TagModule, DividerModule],
+  imports: [DatePipe, ButtonModule, ConfirmDialog, TagModule, DividerModule, TooltipModule],
   templateUrl: './events-detail.html',
   styleUrl: './events-detail.scss',
 })
