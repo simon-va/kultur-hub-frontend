@@ -27,7 +27,7 @@
       tabindex="0"
       (click)="store.selectEvent(event.id)"
       (keydown.enter)="store.selectEvent(event.id)"
-      (keydown.space)="store.selectEvent(event.id)"
+      (keydown.space)="store.selectEvent(event.id); $event.preventDefault()"
     >
       <div class="event-item__title">{{ event.title || 'Neue Veranstaltung' }}</div>
       <div class="event-item__meta">

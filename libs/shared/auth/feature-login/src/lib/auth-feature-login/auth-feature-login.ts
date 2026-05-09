@@ -7,6 +7,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'lib-login-page',
@@ -43,14 +44,12 @@ export class LoginPage {
       return;
     }
 
-    this.userService.loadCurrentUser().subscribe({
+    this.userService.loadCurrentUser().pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
       next: (user) => {
         const target = user.isAdmin ? '/admin' : '/portal';
         this.router.navigate([target]);
-      },
-      error: () => {
-        this.errorMessage.set('Benutzerinformationen konnten nicht geladen werden.');
-        this.loading.set(false);
       },
     });
   }

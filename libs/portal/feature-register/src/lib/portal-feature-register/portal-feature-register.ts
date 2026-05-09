@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 import { SignUpRequest } from '@kultur-hub/shared/domain';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'lib-register-page',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, MessageModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule],
   templateUrl: './portal-feature-register.html',
   styleUrl: './portal-feature-register.scss',
 })
@@ -28,22 +28,18 @@ export class RegisterPage {
   });
 
   readonly loading = signal(false);
-  readonly errorMessage = signal<string | null>(null);
 
   onSubmit(): void {
     if (this.form.invalid) return;
 
     this.loading.set(true);
-    this.errorMessage.set(null);
 
     const body: SignUpRequest = this.form.getRawValue();
 
-    this.http.post('/api/signup', body).subscribe({
+    this.http.post('/api/signup', body).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
       next: () => this.router.navigate(['/login']),
-      error: () => {
-        this.errorMessage.set('Registrierung fehlgeschlagen. Bitte prüfe deinen Einladungslink.');
-        this.loading.set(false);
-      },
     });
   }
 }

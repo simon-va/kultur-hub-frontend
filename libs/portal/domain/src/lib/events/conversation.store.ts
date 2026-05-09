@@ -66,15 +66,19 @@ export const ConversationStore = signalStore(
           const response = await lastValueFrom(
             client.sendEventMessage(orgId, eventId, new SendMessageRequest({ content }))
           );
-          _extraMessages.update(msgs => [
-            ...msgs.filter(m => m.id !== optimisticId),
-            response.userMessage,
-            response.botMessage,
-          ]);
-          const updatedEvent = await lastValueFrom(client.getEventById(orgId, eventId));
-          eventsStore.patchEvent(updatedEvent);
+          if (eventsStore.selectedEventId() === eventId) {
+            _extraMessages.update(msgs => [
+              ...msgs.filter(m => m.id !== optimisticId),
+              response.userMessage,
+              response.botMessage,
+            ]);
+            const updatedEvent = await lastValueFrom(client.getEventById(orgId, eventId));
+            eventsStore.patchEvent(updatedEvent);
+          }
         } catch {
-          _extraMessages.update(msgs => msgs.filter(m => m.id !== optimisticId));
+          if (eventsStore.selectedEventId() === eventId) {
+            _extraMessages.update(msgs => msgs.filter(m => m.id !== optimisticId));
+          }
         } finally {
           _sending.set(false);
         }

@@ -23,8 +23,8 @@ const KulturHubPreset = definePreset(Aura, {
     },
   },
 });
-import { authInterceptor, SUPABASE_URL, SUPABASE_ANON_KEY } from '@kultur-hub/shared/auth/data-access';
-import { ConfirmationService } from 'primeng/api';
+import { authInterceptor, httpErrorInterceptor, SUPABASE_URL, SUPABASE_ANON_KEY } from '@kultur-hub/shared/auth/data-access';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { API_BASE_URL, EventClient, OrganisationClient, UserClient } from '@kultur-hub/shared/api';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
@@ -34,17 +34,18 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
     providePrimeNG({
       theme: {
         preset: KulturHubPreset,
-        options: { darkModeSelector: false || 'none' },
+        options: { darkModeSelector: 'none' },
       },
     }),
     { provide: SUPABASE_URL, useValue: environment.supabaseUrl },
     { provide: SUPABASE_ANON_KEY, useValue: environment.supabaseAnonKey },
     { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
     ConfirmationService,
+    MessageService,
     EventClient,
     OrganisationClient,
     UserClient,

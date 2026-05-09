@@ -11,6 +11,9 @@
   "prefix": "app",
   "tags": ["scope:app"],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "build": {
       "executor": "@angular/build:application",
       "options": {

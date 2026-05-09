@@ -3,11 +3,7 @@
     <h1>Registrieren</h1>
     <p>Du benötigst einen Einladungslink, um ein Konto zu erstellen.</p>
 
-    @if (errorMessage()) {
-      <p-message severity="error">{{ errorMessage() }}</p-message>
-    }
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="field">
         <label for="firstName">Vorname</label>
         <input pInputText id="firstName" formControlName="firstName" autocomplete="given-name" />
