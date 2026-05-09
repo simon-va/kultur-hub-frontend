@@ -68,7 +68,6 @@
       severity="danger"
       [outlined]="true"
       icon="pi pi-trash"
-      [loading]="loading()"
       (click)="deleteEvent()"
     />
     @if (ev.status === EventStatus.Published) {
@@ -76,7 +75,6 @@
         label="Zurück zu Entwurf"
         severity="secondary"
         icon="pi pi-arrow-circle-left"
-        [loading]="loading()"
         (click)="updateStatus(EventStatus.Draft)"
       />
     } @else {
@@ -89,8 +87,7 @@
         <p-button
           label="Veröffentlichen"
           icon="pi pi-send"
-          [disabled]="ev.status === EventStatus.Draft || loading()"
-          [loading]="loading()"
+          [disabled]="ev.status === EventStatus.Draft"
           (click)="updateStatus(EventStatus.Published)"
         />
       </span>

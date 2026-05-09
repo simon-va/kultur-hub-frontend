@@ -1,11 +1,5 @@
 <div #messagesContainer class="chat-messages">
-  @if (conversationStore.loading()) {
-    <div class="chat-messages__skeletons">
-      @for (_ of [1, 2, 3]; track $index) {
-        <p-skeleton height="3rem" styleClass="mb-3" />
-      }
-    </div>
-  } @else if (conversationStore.messages().length === 0) {
+  @if (conversationStore.messages().length === 0) {
     <div class="chat-messages__empty">
       @if (eventsStore.selectedEvent()) {
         <span>Noch keine Nachrichten.<br>Beschreibe die Veranstaltung im Chat.</span>
@@ -37,11 +31,10 @@
     rows="1"
     (keydown.enter)="onEnter($event)"
     (input)="onInput($event)"
-    [attr.disabled]="(!eventsStore.selectedEventId() || conversationStore.sending()) ? '' : null"
+    [attr.disabled]="!eventsStore.selectedEventId() ? '' : null"
   ></textarea>
   <p-button
     icon="pi pi-send"
-    [loading]="conversationStore.sending()"
     [disabled]="!eventsStore.selectedEventId()"
     (click)="send()"
   />

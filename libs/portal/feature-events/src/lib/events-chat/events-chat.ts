@@ -8,7 +8,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'lib-events-chat',
-  imports: [ReactiveFormsModule, ButtonModule, TextareaModule, SkeletonModule],
+  imports: [ReactiveFormsModule, ButtonModule, TextareaModule],
   templateUrl: './events-chat.html',
   styleUrl: './events-chat.scss',
 })

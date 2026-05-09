@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { EventCategoriesStore, EventsStore } from '@kultur-hub/portal/domain';
 import { EventStatus } from '@kultur-hub/shared/api';
 import { ConfirmationService } from 'primeng/api';
@@ -11,7 +11,7 @@ import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'lib-events-detail',
-  imports: [DatePipe, ButtonModule, ConfirmDialog, TagModule, DividerModule, TooltipModule],
+  imports: [DatePipe, ButtonModule, ConfirmDialog, DividerModule, TagModule, TooltipModule],
   templateUrl: './events-detail.html',
   styleUrl: './events-detail.scss',
 })
@@ -20,8 +20,6 @@ export class EventsDetail {
   protected readonly categoriesStore = inject(EventCategoriesStore);
   protected readonly EventStatus = EventStatus;
   private readonly confirmationService = inject(ConfirmationService);
-
-  protected readonly loading = signal(false);
 
   protected readonly selectedCategory = computed(() => {
     const event = this.store.selectedEvent();
@@ -41,13 +39,8 @@ export class EventsDetail {
 
   protected async updateStatus(status: EventStatus): Promise<void> {
     const ev = this.store.selectedEvent();
-    if (!ev || this.loading()) return;
-    this.loading.set(true);
-    try {
-      await this.store.updateEventStatus(ev.id, status);
-    } finally {
-      this.loading.set(false);
-    }
+    if (!ev) return;
+    await this.store.updateEventStatus(ev.id, status);
   }
 
   protected deleteEvent(): void {
@@ -61,12 +54,7 @@ export class EventsDetail {
       acceptLabel: 'Löschen',
       rejectLabel: 'Abbrechen',
       accept: async () => {
-        this.loading.set(true);
-        try {
-          await this.store.deleteEvent(ev.id);
-        } finally {
-          this.loading.set(false);
-        }
+        await this.store.deleteEvent(ev.id);
       },
     });
   }

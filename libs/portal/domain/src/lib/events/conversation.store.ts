@@ -79,8 +79,7 @@ export const ConversationStore = signalStore(
               response.userMessage,
               response.botMessage,
             ]);
-            const updatedEvent = await lastValueFrom(client.getEventById(orgId, eventId));
-            eventsStore.patchEvent(updatedEvent);
+            eventsStore.reloadSelectedEvent();
           }
         } catch {
           if (eventsStore.selectedEventId() === eventId) {

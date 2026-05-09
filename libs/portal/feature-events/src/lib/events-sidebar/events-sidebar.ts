@@ -12,7 +12,7 @@ type FilterValue = 'all' | 'draft' | 'published';
 
 @Component({
   selector: 'lib-events-sidebar',
-  imports: [FormsModule, DatePipe, ButtonModule, SelectButtonModule, SkeletonModule, TagModule],
+  imports: [FormsModule, DatePipe, ButtonModule, SelectButtonModule, TagModule],
   templateUrl: './events-sidebar.html',
   styleUrl: './events-sidebar.scss',
 })
@@ -31,7 +31,7 @@ export class EventsSidebar {
 
   protected readonly filteredEvents = computed(() => {
     const f = this.filterValue();
-    const events = this.store.events();
+    const events = this.store.overviewEvents();
     if (f === 'all') return events;
     const status = f === 'draft' ? EventStatus.Draft : EventStatus.Published;
     return events.filter((e) => e.status === status);
