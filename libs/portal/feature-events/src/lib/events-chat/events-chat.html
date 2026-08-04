@@ -1,0 +1,54 @@
+<div #messagesContainer class="chat-messages">
+  @if (conversationStore.messages().length === 0) {
+    <div class="chat-messages__empty">
+      @if (eventsStore.selectedEvent()) {
+        <span>Noch keine Nachrichten.<br>Beschreibe die Veranstaltung im Chat.</span>
+      } @else {
+        <span>Keine Veranstaltung ausgewählt</span>
+      }
+    </div>
+  } @else {
+    @for (msg of conversationStore.messages(); track msg.id) {
+      <div class="msg" [class.msg--user]="msg.role === MessageRole.User" [class.msg--assistant]="msg.role === MessageRole.Assistant">
+        <div class="msg__avatar">{{ msg.role === MessageRole.User ? 'Du' : 'AI' }}</div>
+        <div class="msg__bubble">{{ msg.content }}</div>
+      </div>
+    }
+  }
+  @if (conversationStore.sending()) {
+    <div class="msg msg--assistant">
+      <div class="msg__avatar">AI</div>
+      <div class="msg__bubble">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  }
+  @if (conversationStore.sendError(); as error) {
+    <div class="chat-error">
+      <span>{{ error }}</span>
+      <p-button icon="pi pi-times" [text]="true" (click)="conversationStore.clearSendError()" />
+    </div>
+  }
+</div>
+
+<div class="chat-input-area">
+  <textarea
+    #textareaRef
+    pTextarea
+    [formControl]="inputControl"
+    placeholder="Änderungen beschreiben…"
+    rows="1"
+    (keydown.enter)="onEnter($event)"
+    (input)="onInput($event)"
+    [attr.disabled]="!eventsStore.selectedEventId() ? '' : null"
+  ></textarea>
+  <p-button
+    icon="pi pi-send"
+    [disabled]="!eventsStore.selectedEventId()"
+    (click)="send()"
+  />
+</div>

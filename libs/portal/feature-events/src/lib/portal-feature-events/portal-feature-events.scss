@@ -1,1 +1,15 @@
+:host {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
 
+.events-empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--p-text-muted-color);
+  font-size: 0.8125rem;
+  text-align: center;
+}

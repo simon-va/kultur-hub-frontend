@@ -1,1 +1,9 @@
-<p>PortalFeatureEvents works!</p>
+<lib-events-sidebar />
+@if (eventsStore.selectedEventId()) {
+  <lib-events-chat />
+  <lib-events-detail />
+} @else {
+  <div class="events-empty">
+    <span>Wähle eine Veranstaltung aus oder erstelle eine neue.</span>
+  </div>
+}

@@ -8,10 +8,6 @@
       <input pInputText id="name" formControlName="name" />
     </div>
 
-    @if (errorMessage()) {
-      <p-message severity="error" [text]="errorMessage()" />
-    }
-
     <p-button
       type="submit"
       label="Organisation erstellen"

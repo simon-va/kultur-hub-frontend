@@ -1,12 +1,12 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Client } from '@kultur-hub/shared/api';
+import { UserClient } from '@kultur-hub/shared/api';
 import { User } from '@kultur-hub/shared/domain';
 import { BehaviorSubject, EMPTY, filter, map, switchMap, take, tap } from 'rxjs';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly client = inject(Client);
+  private readonly client = inject(UserClient);
   private readonly supabase = inject(SupabaseService);
 
   readonly currentUser = signal<User | null>(null);
@@ -33,7 +33,7 @@ export class UserService {
     const session = this.supabase.currentSession;
     if (!session) return EMPTY;
     const userId = session.user.id;
-    return this.client.users(userId).pipe(
+    return this.client.getUser(userId).pipe(
       map((res) => ({
         id: res.userId,
         firstName: res.firstName,

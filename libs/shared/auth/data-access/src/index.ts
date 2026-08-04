@@ -5,3 +5,4 @@ export * from './lib/auth.guard';
 export * from './lib/admin.guard';
 export * from './lib/not-authenticated.guard';
 export * from './lib/auth.interceptor';
+export * from './lib/http-error.interceptor';

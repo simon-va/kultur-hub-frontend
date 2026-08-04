@@ -1,21 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { AuthClient, SignUpRequest } from '@kultur-hub/shared/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
-import { SignUpRequest } from '@kultur-hub/shared/domain';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'lib-register-page',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, MessageModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule],
   templateUrl: './portal-feature-register.html',
   styleUrl: './portal-feature-register.scss',
 })
 export class RegisterPage {
-  private readonly http = inject(HttpClient);
+  private readonly authClient = inject(AuthClient);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
@@ -28,22 +27,18 @@ export class RegisterPage {
   });
 
   readonly loading = signal(false);
-  readonly errorMessage = signal<string | null>(null);
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
     this.loading.set(true);
-    this.errorMessage.set(null);
 
-    const body: SignUpRequest = this.form.getRawValue();
-
-    this.http.post('/api/signup', body).subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: () => {
-        this.errorMessage.set('Registrierung fehlgeschlagen. Bitte prüfe deinen Einladungslink.');
-        this.loading.set(false);
-      },
-    });
+    try {
+      const body = new SignUpRequest(this.form.getRawValue());
+      await lastValueFrom(this.authClient.signUp(body));
+      this.router.navigate(['/login']);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }
